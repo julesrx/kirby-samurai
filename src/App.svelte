@@ -1,85 +1,111 @@
 <script lang="ts">
   import GitHub from './assets/github.svg?component';
-  import fs from './assets/start.png';
-  import f1 from './assets/frame1.png';
-  import f2 from './assets/frame2.png';
-  import f3a from './assets/frame3a.png';
-  import f3b from './assets/frame3b.png';
+  import ifs from './assets/start.png';
+  import if1 from './assets/frame1.png';
+  import if2 from './assets/frame2.png';
+  import if3a from './assets/frame3a.png';
+  import if3b from './assets/frame3b.png';
 
-  const frames = [
-    { id: 'f-s', src: fs, hidden: true },
-    { id: 'f-1', src: f1, hidden: false },
-    { id: 'f-2', src: f2, hidden: true },
-    { id: 'f-3a', src: f3a, hidden: true },
-    { id: 'f-3b', src: f3b, hidden: true }
-  ];
+  interface Frame {
+    id: string;
+    src: string;
+  }
 
-  // const fs = document.getElementById('f-s')!;
-  // const f1 = document.getElementById('f-1')!;
-  // const f2 = document.getElementById('f-2')!;
-  // const f3a = document.getElementById('f-3a')!;
-  // const f3b = document.getElementById('f-3b')!;
+  enum GameState {
+    StartScreen,
+    BeforeChallenge,
+    Challenge,
+    WinA,
+    WinB
+  }
 
-  // f1.style.display = 'none';
-  // f2.style.display = 'none';
-  // f3a.style.display = 'none';
-  // f3b.style.display = 'none';
+  const fs: Frame = { id: 'f-s', src: ifs };
+  const f1: Frame = { id: 'f-1', src: if1 };
+  const f2: Frame = { id: 'f-2', src: if2 };
+  const f3a: Frame = { id: 'f-3a', src: if3a };
+  const f3b: Frame = { id: 'f-3b', src: if3b };
 
-  // let hasStarted = false;
+  let gameState: GameState = GameState.StartScreen;
+  $: currentFrame = getCurrentFrame(gameState);
 
-  // document.addEventListener('keydown', (e) => {
-  //   if (hasStarted) return;
-  //   if (e.code !== 'Space') return;
+  const getCurrentFrame = (gameState: GameState) => {
+    switch (gameState) {
+      case GameState.StartScreen:
+      default:
+        return fs;
 
-  //   hasStarted = true;
-  //   f1.style.display = '';
-  //   fs.style.display = 'none';
+      case GameState.BeforeChallenge:
+        return f1;
 
-  //   document.addEventListener('keydown', handleChallenge);
+      case GameState.Challenge:
+        return f2;
 
-  //   // TODO: random timer
-  //   setTimeout(() => challenge(), 1000);
-  // });
+      case GameState.WinA:
+        return f3a;
 
-  // // TODO: count frames or ms after the challenge begin
-  // const challenge = () => {
-  //   f2.style.display = '';
-  //   f1.style.display = 'none';
-  // };
+      case GameState.WinB:
+        return f3b;
+    }
+  };
 
-  // const handleChallenge = (e: KeyboardEvent) => {
-  //   if (!hasStarted) return;
-  //   if (e.code !== 'KeyQ' && e.code !== 'Slash') return;
+  // start the game
+  document.addEventListener('keydown', (e) => {
+    if (
+      gameState !== GameState.StartScreen &&
+      gameState !== GameState.WinA &&
+      gameState !== GameState.WinB
+    )
+      return;
+    if (e.code !== 'Space') return;
 
-  //   f2.style.display = 'none';
+    prepareChallenge();
+  });
 
-  //   switch (e.code) {
-  //     case 'KeyQ':
-  //       f3a.style.display = '';
-  //       break;
-  //     case 'Slash':
-  //       f3b.style.display = '';
-  //       break;
-  //   }
+  let timeToWin: number = 0;
+  $: timeToWinFormatted = Math.trunc(timeToWin).toString().padStart(3, '0');
 
-  //   hasStarted = false;
+  let startTime: number | null = null;
+  const prepareChallenge = () => {
+    gameState = GameState.BeforeChallenge;
 
-  //   document.removeEventListener('keydown', handleChallenge);
-  // };
+    document.addEventListener('keydown', resolveChallenge);
+
+    const delay = (Math.random() + 1) * 1000;
+    setTimeout(challenge, delay);
+  };
+
+  const challenge = () => {
+    gameState = GameState.Challenge;
+    startTime = performance.now();
+  };
+
+  const resolveChallenge = (e: KeyboardEvent) => {
+    if (gameState !== GameState.Challenge) return;
+    if (e.code !== 'KeyQ' && e.code !== 'Slash') return;
+
+    const endTime = performance.now();
+    timeToWin = endTime - startTime!;
+
+    if (e.code === 'KeyQ') gameState = GameState.WinA;
+    else if (e.code === 'Slash') gameState = GameState.WinB;
+
+    document.removeEventListener('keydown', resolveChallenge);
+  };
 </script>
 
 <main class="relative">
-  <div class="absolute font-bold text-2xl right-[95px] bottom-[240px]">000</div>
+  {#if gameState !== GameState.StartScreen}
+    <div class="absolute font-bold text-2xl right-[95px] bottom-[240px]">
+      {timeToWinFormatted}
+    </div>
+  {/if}
 
-  {#each frames as frame}
-    <img
-      id={frame.id}
-      src={frame.src}
-      alt={'frame-' + frame.id}
-      class="h-[800px]"
-      class:hidden={frame.hidden}
-    />
-  {/each}
+  <img
+    id={currentFrame.id}
+    src={currentFrame.src}
+    alt={'frame-' + currentFrame.id}
+    class="h-[800px]"
+  />
 </main>
 
 <a
