@@ -19,7 +19,10 @@
   });
 
   let timeToWin: number = 0;
-  $: timeToWinFormatted = Math.trunc(timeToWin).toString().padStart(3, '0');
+  $: timeToWinFormatted =
+    gameState === GameState.WinA || gameState === GameState.WinB
+      ? Math.trunc(timeToWin).toString().padStart(3, '0')
+      : '...';
 
   let startTime: number | null = null;
   const prepareChallenge = () => {
@@ -53,7 +56,7 @@
 
 <main class="relative">
   {#if gameState !== GameState.StartScreen}
-    <div class="absolute font-bold text-2xl right-[95px] bottom-[240px]">
+    <div class="absolute font-bold text-2xl right-[90px] bottom-[225px] h-12 w-12 text-center">
       {timeToWinFormatted}
     </div>
   {/if}
