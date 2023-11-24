@@ -1,54 +1,9 @@
 <script lang="ts">
   import GitHub from './assets/github.svg?component';
-  import ifs from './assets/start.png';
-  import if1 from './assets/frame1.png';
-  import if2 from './assets/frame2.png';
-  import if3a from './assets/frame3a.png';
-  import if3b from './assets/frame3b.png';
-
-  interface Frame {
-    id: string;
-    src: string;
-  }
-
-  enum GameState {
-    StartScreen,
-    BeforeChallenge,
-    Challenge,
-    WinA,
-    WinB
-  }
-
-  // TODO: preload images to prevent loading
-
-  const fs: Frame = { id: 'f-s', src: ifs };
-  const f1: Frame = { id: 'f-1', src: if1 };
-  const f2: Frame = { id: 'f-2', src: if2 };
-  const f3a: Frame = { id: 'f-3a', src: if3a };
-  const f3b: Frame = { id: 'f-3b', src: if3b };
+  import Frame from './lib/Frame.svelte';
+  import { GameState } from './types';
 
   let gameState: GameState = GameState.StartScreen;
-  $: currentFrame = getCurrentFrame(gameState);
-
-  const getCurrentFrame = (gameState: GameState) => {
-    switch (gameState) {
-      case GameState.StartScreen:
-      default:
-        return fs;
-
-      case GameState.BeforeChallenge:
-        return f1;
-
-      case GameState.Challenge:
-        return f2;
-
-      case GameState.WinA:
-        return f3a;
-
-      case GameState.WinB:
-        return f3b;
-    }
-  };
 
   // start the game
   document.addEventListener('keydown', (e) => {
@@ -103,12 +58,7 @@
     </div>
   {/if}
 
-  <img
-    id={currentFrame.id}
-    src={currentFrame.src}
-    alt={'frame-' + currentFrame.id}
-    class="h-[800px]"
-  />
+  <Frame {gameState} />
 </main>
 
 <a
