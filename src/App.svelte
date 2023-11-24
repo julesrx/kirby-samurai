@@ -19,6 +19,8 @@
     WinB
   }
 
+  // TODO: preload images to prevent loading
+
   const fs: Frame = { id: 'f-s', src: ifs };
   const f1: Frame = { id: 'f-1', src: if1 };
   const f2: Frame = { id: 'f-2', src: if2 };
