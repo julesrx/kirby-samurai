@@ -65,7 +65,7 @@
   href="https://github.com/julesrx/kirby-samurai"
   target="_blank"
   rel="nofollow"
-  class="fixed bottom-0 right-0 text-white opacity-10"
+  class="fixed bottom-2 right-2 text-white opacity-10"
 >
   <GitHub />
 </a>
