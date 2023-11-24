@@ -69,6 +69,7 @@
   let startTime: number | null = null;
   const prepareChallenge = () => {
     gameState = GameState.BeforeChallenge;
+    timeToWin = 0;
 
     document.addEventListener('keydown', resolveChallenge);
 
