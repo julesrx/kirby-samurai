@@ -65,7 +65,7 @@
 </main>
 
 <a
-  href="https://github.com/julesrx/kirby-samurai"
+  href="https://github.com/julesrx/samurai-kirby"
   target="_blank"
   rel="nofollow"
   class="fixed bottom-2 right-2 text-white opacity-10"
